@@ -9,15 +9,32 @@ import {
   TextInput,
   Title,
 } from '@mantine/core';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
+import useAuthentication from '../../hooks/useAuthentication';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const authenticationData = useAuthentication();
+
+  if (authenticationData === null) {
+    // Eğer authenticationData henüz gelmemişse "Loading..." görüntüle
+    return <h1>Loading...</h1>;
+  }
+
+  if (authenticationData.isAuthenticated) {
+    // Eğer kullanıcı oturum açmışsa /dashboard sayfasına yönlendir
+    router.push('/dashboard');
+    return null;
+  }
 
   const handleSignIn = async () => {
+    setLoading(true);
     try {
-      const response = await fetch('/api/login', {
+      const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -28,13 +45,17 @@ const LoginPage = () => {
       if (response.ok) {
         // TODO: redirect to dashboard
         console.log('Login successful');
+        router.push('/dashboard');
       } else {
         // TODO: show error
         console.log('Login failed');
       }
+      setLoading(false);
     } catch (error) {
       // TODO: show error
+      setLoading(false);
       console.error('An error occurred:', error);
+      throw error;
     }
   };
 
@@ -75,7 +96,9 @@ const LoginPage = () => {
               <Text size="sm">Please contact with Developer Team!</Text>
             </Popover.Dropdown>
           </Popover>
-          <Button onClick={handleSignIn}>Sign in</Button>
+          <Button onClick={handleSignIn} loading={loading} loaderPosition="center">
+            Sign in
+          </Button>
         </Group>
       </Paper>
     </Container>
