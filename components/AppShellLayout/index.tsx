@@ -8,10 +8,21 @@ import {
   IconTir,
 } from '@tabler/icons';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { UserCard } from '../ui/UserCard';
 
-const data = [
+interface AppShellLayoutProps {
+  children: ReactNode;
+}
+
+interface MenuItem {
+  icon: any;
+  label: string;
+  description: string;
+  href: string;
+}
+
+const data: MenuItem[] = [
   {
     icon: IconGauge,
     label: 'Dashboard',
@@ -45,7 +56,7 @@ const data = [
   { icon: IconReport, label: 'Raporlar', description: 'Raporlar', href: '/reports' },
 ];
 
-const AppShellLayout = () => {
+const AppShellLayout: React.FC<AppShellLayoutProps> = ({ children }) => {
   const router = useRouter();
 
   const currentPath = router.pathname;
@@ -88,7 +99,7 @@ const AppShellLayout = () => {
         },
       })}
     >
-      {/* Your application here */}
+      {children}
     </AppShell>
   );
 };
