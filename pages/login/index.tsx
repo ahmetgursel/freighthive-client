@@ -78,8 +78,8 @@ const LoginPage = () => {
           onChange={(event) => setEmail(event.target.value)}
         />
         <PasswordInput
-          label="Password"
-          placeholder="Your password"
+          label="Şifre"
+          placeholder="Şifrenizi girin"
           required
           mt="md"
           value={password}
@@ -89,15 +89,15 @@ const LoginPage = () => {
           <Popover width={200} position="bottom" withArrow shadow="sm">
             <Popover.Target>
               <Button variant="subtle" size="sm">
-                Forgot my pass!
+                Şifremi Unuttum!
               </Button>
             </Popover.Target>
             <Popover.Dropdown>
-              <Text size="sm">Please contact with Developer Team!</Text>
+              <Text size="sm">Geliştirici ekibiyle iletişime geç!</Text>
             </Popover.Dropdown>
           </Popover>
           <Button onClick={handleSignIn} loading={loading} loaderPosition="center">
-            Sign in
+            Giriş Yap
           </Button>
         </Group>
       </Paper>
