@@ -30,7 +30,35 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       res.status(500).json({ error: 'An error occurred' });
     }
   } else if (req.method === 'POST') {
-    res.status(200).json({ message: 'POST method' });
+    try {
+      const cookies = nookies.get({ req });
+      const accessToken = cookies.access_token;
+
+      if (!accessToken) {
+        res.status(401).json({ error: 'Access token not found' });
+        return;
+      }
+
+      const newOrganizationData = req.body;
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/organizations`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify(newOrganizationData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create an organization');
+      }
+
+      const createdOrganizationData = await response.json();
+      res.status(201).json(createdOrganizationData);
+    } catch (error) {
+      res.status(500).json({ error: 'An error occurred' });
+    }
   } else {
     res.status(405).json({ error: 'Method not allowed' });
   }
