@@ -9,7 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const { email, password } = req.body;
 
-    const response = await fetch('http://localhost:3333/auth/signin', {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/signin`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
