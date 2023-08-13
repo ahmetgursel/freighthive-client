@@ -34,6 +34,35 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     } catch (error) {
       res.status(500).json({ error: 'An error occurred' });
     }
+  } else if (method === 'PATCH') {
+    try {
+      const cookies = nookies.get({ req });
+      const accessToken = cookies.access_token;
+
+      if (!accessToken) {
+        res.status(401).json({ error: 'Access token not found' });
+      }
+
+      const updatedTicketData = req.body;
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tickets/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify(updatedTicketData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update ticket data');
+      }
+
+      const updatedTicketDetail = await response.json();
+      res.status(200).json(updatedTicketDetail);
+    } catch (error) {
+      res.status(500).json({ error: 'An error occurred' });
+    }
   } else {
     res.status(405).json({ error: 'Method not allowed' });
   }
