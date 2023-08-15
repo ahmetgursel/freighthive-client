@@ -1,10 +1,11 @@
-import { ActionIcon, Button, Divider, Flex, Group, Modal, Table, Text } from '@mantine/core';
+import { ActionIcon, Divider, Flex, Group, Modal, Table, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { IconPlus, IconSettings, IconTrashOff } from '@tabler/icons';
 import router from 'next/router';
 import React from 'react';
 import AppShellLayout from '../../components/AppShellLayout';
+import CustomButton from '../../components/ui/CustomButton';
 import useAuthentication from '../../hooks/useAuthentication';
 
 interface RowData {
@@ -162,18 +163,12 @@ const Trucks = () => {
         </Modal>
 
         <Group position="center">
-          <Button
-            size="md"
-            radius="lg"
-            compact
-            variant="light"
-            rightIcon={<IconPlus size="1rem" />}
+          <CustomButton
+            label="Yeni Araç Ekle"
             onClick={openNewTruckButton}
             loading={openedNewTruckButton}
-            loaderPosition="right"
-          >
-            Yeni Araç Ekle
-          </Button>
+            icon={<IconPlus size="1rem" />}
+          />
         </Group>
       </Flex>
 
