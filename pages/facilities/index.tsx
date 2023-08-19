@@ -1,12 +1,22 @@
+import { Table } from '@mantine/core';
 import router from 'next/router';
 import React from 'react';
 import useSWR from 'swr';
 import AppShellLayout from '../../components/AppShellLayout';
-import CustomTable from '../../components/ui/CustomTable';
+
+import ActionIconsGroup from '../../components/ui/ActionIconGroup';
 import HeaderGroup from '../../components/ui/HeaderGroup';
 import LoadingIcon from '../../components/ui/LoadingIcon';
 import useAuthentication from '../../hooks/useAuthentication';
 import fetcher from '../../utils/fetcher';
+
+interface FacilityType {
+  id: string;
+  name: string;
+  address: string;
+  city: string;
+  country: string;
+}
 
 const columns = [
   { key: 'name', title: 'İsim' },
@@ -49,15 +59,44 @@ const Facilities = () => {
         addButtonTitle="Yeni Depo Ekle"
       />
 
-      <CustomTable
-        columns={columns}
-        data={data}
-        updateModalTitle="Depo Kaydını Güncelle"
-        deleteModalTitle="Bu depo kaydını silmek istediğinizden emin misiniz?"
-        deleteModalText="Bu işlem geri alınamaz. Bu depo kaydıyla ilgili tüm veriler silinecektir."
-        deleteModalConfirmButtonLabel="Depo Kaydını Sil"
-        deleteModalCancelButtonLabel="İptal"
-      />
+      <Table
+        verticalSpacing="md"
+        horizontalSpacing="md"
+        fontSize="lg"
+        my="md"
+        mx="md"
+        striped
+        highlightOnHover
+      >
+        <thead>
+          <tr>
+            {columns.map((column) => (
+              <th key={column.key}>{column.title}</th>
+            ))}
+            <th />
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((row: FacilityType, rowIndex: number) => (
+            <tr key={rowIndex}>
+              <td>{row.name}</td>
+              <td>{row.address}</td>
+              <td>{row.city}</td>
+              <td>{row.country}</td>
+              <td>
+                <ActionIconsGroup
+                  rowId={row.id}
+                  updateModalTitle="Depo Kaydını Güncelle"
+                  deleteModalTitle="Bu depo kaydını silmek istediğinizden emin misiniz?"
+                  deleteModalText="Bu işlem geri alınamaz. Bu depo kaydıyla ilgili tüm veriler silinecektir."
+                  deleteModalConfirmButtonLabel="Depo Kaydını Sil"
+                  deleteModalCancelButtonLabel="İptal"
+                />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
     </AppShellLayout>
   );
 };
