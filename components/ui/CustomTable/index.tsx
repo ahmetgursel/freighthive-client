@@ -14,9 +14,22 @@ interface CustomTableRow {
 interface CustomTableProps {
   columns: CustomTableColumn[];
   data: CustomTableRow[];
+  updateModalTitle: string;
+  deleteModalTitle: string;
+  deleteModalText: string;
+  deleteModalConfirmButtonLabel: string;
+  deleteModalCancelButtonLabel: string;
 }
 
-const CustomTable: React.FC<CustomTableProps> = ({ columns, data }) => (
+const CustomTable: React.FC<CustomTableProps> = ({
+  columns,
+  data,
+  updateModalTitle,
+  deleteModalTitle,
+  deleteModalText,
+  deleteModalConfirmButtonLabel,
+  deleteModalCancelButtonLabel,
+}) => (
   <MantineTable
     verticalSpacing="md"
     horizontalSpacing="md"
@@ -41,7 +54,14 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data }) => (
             <td key={column.key}>{row[column.key]}</td>
           ))}
           <td>
-            <ActionIconsGroup rowId={row.id} />
+            <ActionIconsGroup
+              rowId={row.id}
+              updateModalTitle={updateModalTitle}
+              deleteModalTitle={deleteModalTitle}
+              deleteModalText={deleteModalText}
+              deleteModalConfirmButtonLabel={deleteModalConfirmButtonLabel}
+              deleteModalCancelButtonLabel={deleteModalCancelButtonLabel}
+            />
           </td>
         </tr>
       ))}
