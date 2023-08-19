@@ -43,9 +43,21 @@ const Organizations = () => {
 
   return (
     <AppShellLayout>
-      <HeaderGroup modalTitle="Cari Kayıt Ekle" title="Cari Listesi" />
+      <HeaderGroup
+        modalTitle="Yeni Cari Kayıt Ekle"
+        title="Cari Listesi"
+        addButtonTitle="Yeni Cari Kayıt Ekle"
+      />
 
-      <CustomTable columns={columns} data={data} />
+      <CustomTable
+        columns={columns}
+        data={data}
+        updateModalTitle="Cari Kaydını Güncelle"
+        deleteModalTitle="Bu cari kaydını silmek istediğinizden emin misiniz?"
+        deleteModalText="Bu işlem geri alınamaz. Bu cari kaydıyla ilgili tüm veriler silinecektir."
+        deleteModalConfirmButtonLabel="Cari Kaydını Sil"
+        deleteModalCancelButtonLabel="İptal"
+      />
     </AppShellLayout>
   );
 };
