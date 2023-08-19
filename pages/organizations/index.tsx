@@ -1,46 +1,27 @@
-import { ActionIcon, Button, Divider, Flex, Group, Modal, Table, Text } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
-import { modals } from '@mantine/modals';
-import { IconPlus, IconSettings, IconTrashOff } from '@tabler/icons';
 import router from 'next/router';
 import React from 'react';
+import useSWR from 'swr';
 import AppShellLayout from '../../components/AppShellLayout';
+import CustomTable from '../../components/ui/CustomTable';
+import HeaderGroup from '../../components/ui/HeaderGroup';
+import LoadingIcon from '../../components/ui/LoadingIcon';
 import useAuthentication from '../../hooks/useAuthentication';
+import fetcher from '../../utils/fetcher';
 
-interface OrganizationRowData {
-  name: string;
-  address: string;
-  taxNumber: string;
-  taxOffice: string;
-  invoiceAddress: string;
-}
+const columns = [
+  { key: 'name', title: 'İsim' },
+  { key: 'address', title: 'Adres' },
+  { key: 'taxNumber', title: 'Vergi Numarası' },
+  { key: 'taxOffice', title: 'Vergi Dairesi' },
+];
 
 const Organizations = () => {
   const authenticationData = useAuthentication();
-  const [
-    openedNewOrganizationButton,
-    { open: openNewOrganizationButton, close: closeNewOrganizationButton },
-  ] = useDisclosure(false);
-  const [openedUpdateIcon, { open: openUpdateIcon, close: closeUpdateIcon }] = useDisclosure(false);
-
-  const openDeleteModal = () =>
-    modals.openConfirmModal({
-      title: 'Bu cari kaydı silmek istediğinizden emin misiniz?',
-      centered: true,
-      children: (
-        <Text size="sm">
-          Bu işlem geri alınamaz. Bu cari kayıt ile ilgili tüm veriler silinecektir.
-        </Text>
-      ),
-      labels: { confirm: 'Cari Kayıt Sil', cancel: 'İptal' },
-      confirmProps: { color: 'red' },
-      onCancel: () => console.log('Cancel'),
-      onConfirm: () => console.log('Confirmed'),
-    });
+  const { data, error } = useSWR('/api/organizations', fetcher);
 
   if (authenticationData === null) {
-    // Eğer authenticationData henüz gelmemişse "Loading..." görüntüle
-    return <h1>Loading...</h1>;
+    // Eğer authenticationData henüz gelmemişse loading ikonunu görüntüle
+    return <LoadingIcon />;
   }
 
   if (authenticationData.isAuthenticated === false) {
@@ -49,88 +30,22 @@ const Organizations = () => {
     return null;
   }
 
-  const rows = OrganizationRowData.map((data, index) => (
-    <tr key={index}>
-      <td>{data.name}</td>
-      <td>{data.address}</td>
-      <td>{data.taxNumber}</td>
-      <td>{data.taxOffice}</td>
-      <td>
-        <Flex gap="md">
-          <ActionIcon>
-            <IconSettings size="1rem" onClick={openUpdateIcon} />
-          </ActionIcon>
-          <ActionIcon color="red.7">
-            <IconTrashOff size="1rem" onClick={openDeleteModal} />
-          </ActionIcon>
-        </Flex>
-      </td>
-    </tr>
-  ));
+  if (!data && !error) {
+    // Veri henüz yüklenmemişse veya hata oluşmamışsa loading ikonunu görüntüle
+    return <LoadingIcon />;
+  }
+
+  if (error) {
+    // Hata durumunda hata mesajını görüntüle
+    // TODO: error page oluştur
+    return <div>Hata oluştu: {error.message}</div>;
+  }
 
   return (
     <AppShellLayout>
-      <Flex gap="md" justify="space-between" align="center" direction="row" wrap="wrap" px="md">
-        <Text fz="xl" fw={700}>
-          Cari Kayıt Listesi
-        </Text>
+      <HeaderGroup modalTitle="Cari Kayıt Ekle" title="Cari Listesi" />
 
-        <Modal
-          opened={openedNewOrganizationButton}
-          onClose={closeNewOrganizationButton}
-          title="Yeni Cari Kayıt Ekle"
-          centered
-        >
-          {/* yeni cari kayıt ekleme modal buraya */}
-        </Modal>
-
-        <Group position="center">
-          <Button
-            size="md"
-            radius="lg"
-            compact
-            variant="light"
-            rightIcon={<IconPlus size="1rem" />}
-            onClick={openNewOrganizationButton}
-            loading={openedNewOrganizationButton}
-            loaderPosition="right"
-          >
-            Yeni Cari Kayıt Ekle
-          </Button>
-        </Group>
-      </Flex>
-
-      <Divider my="sm" size={1} />
-
-      <Modal
-        opened={openedUpdateIcon}
-        onClose={closeUpdateIcon}
-        title="Cari Kayıt Güncelle"
-        centered
-      >
-        {/* cari kayıt güncelleme modal buraya */}
-      </Modal>
-
-      <Table
-        verticalSpacing="md"
-        horizontalSpacing="md"
-        fontSize="lg"
-        my="md"
-        mx="md"
-        striped
-        highlightOnHover
-      >
-        <thead>
-          <tr>
-            <th style={{ width: '20%' }}>İsim</th>
-            <th>Adres</th>
-            <th style={{ width: '15%' }}>Vergi Numarası</th>
-            <th style={{ width: '15%' }}>Vergi Dairesi</th>
-            <th />
-          </tr>
-        </thead>
-        <tbody>{rows}</tbody>
-      </Table>
+      <CustomTable columns={columns} data={data} />
     </AppShellLayout>
   );
 };
