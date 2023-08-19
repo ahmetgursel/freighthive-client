@@ -7,9 +7,10 @@ import CustomButton from '../CustomButton';
 interface HeaderGroupProps {
   title: string;
   modalTitle: string;
+  addButtonTitle: string;
 }
 
-const HeaderGroup: React.FC<HeaderGroupProps> = ({ title, modalTitle }) => {
+const HeaderGroup: React.FC<HeaderGroupProps> = ({ title, modalTitle, addButtonTitle }) => {
   const [openedNewButton, { open: openNewButton, close: closeNewButton }] = useDisclosure(false);
 
   return (
@@ -21,7 +22,7 @@ const HeaderGroup: React.FC<HeaderGroupProps> = ({ title, modalTitle }) => {
 
         <Group position="center">
           <CustomButton
-            label="Yeni Araç Ekle"
+            label={addButtonTitle}
             onClick={openNewButton}
             loading={openedNewButton}
             icon={<IconPlus size="1rem" />}
