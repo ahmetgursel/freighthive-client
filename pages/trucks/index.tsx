@@ -43,9 +43,21 @@ const Trucks = () => {
 
   return (
     <AppShellLayout>
-      <HeaderGroup modalTitle="Araç Listesi Ekle" title="Araç Listesi" />
+      <HeaderGroup
+        modalTitle="Yeni Araç Ekle"
+        title="Araç Listesi"
+        addButtonTitle="Yeni Araç Ekle"
+      />
 
-      <CustomTable columns={columns} data={data} />
+      <CustomTable
+        columns={columns}
+        data={data}
+        updateModalTitle="Araç Kaydını Güncelle"
+        deleteModalTitle="Bu araç kaydını silmek istediğinizden emin misiniz?"
+        deleteModalText="Bu işlem geri alınamaz. Bu araç kaydıyla ilgili tüm veriler silinecektir."
+        deleteModalConfirmButtonLabel="Araç Kaydını Sil"
+        deleteModalCancelButtonLabel="İptal"
+      />
     </AppShellLayout>
   );
 };
