@@ -1,12 +1,21 @@
+import { Table } from '@mantine/core';
 import router from 'next/router';
 import React from 'react';
 import useSWR from 'swr';
 import AppShellLayout from '../../components/AppShellLayout';
-import CustomTable from '../../components/ui/CustomTable';
+import ActionIconsGroup from '../../components/ui/ActionIconGroup';
 import HeaderGroup from '../../components/ui/HeaderGroup';
 import LoadingIcon from '../../components/ui/LoadingIcon';
 import useAuthentication from '../../hooks/useAuthentication';
 import fetcher from '../../utils/fetcher';
+
+interface OrganizationType {
+  id: string;
+  name: string;
+  address: string;
+  taxNumber: string;
+  taxOffice: string;
+}
 
 const columns = [
   { key: 'name', title: 'İsim' },
@@ -49,15 +58,44 @@ const Organizations = () => {
         addButtonTitle="Yeni Cari Kayıt Ekle"
       />
 
-      <CustomTable
-        columns={columns}
-        data={data}
-        updateModalTitle="Cari Kaydını Güncelle"
-        deleteModalTitle="Bu cari kaydını silmek istediğinizden emin misiniz?"
-        deleteModalText="Bu işlem geri alınamaz. Bu cari kaydıyla ilgili tüm veriler silinecektir."
-        deleteModalConfirmButtonLabel="Cari Kaydını Sil"
-        deleteModalCancelButtonLabel="İptal"
-      />
+      <Table
+        verticalSpacing="md"
+        horizontalSpacing="md"
+        fontSize="lg"
+        my="md"
+        mx="md"
+        striped
+        highlightOnHover
+      >
+        <thead>
+          <tr>
+            {columns.map((column) => (
+              <th key={column.key}>{column.title}</th>
+            ))}
+            <th />
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((row: OrganizationType, rowIndex: number) => (
+            <tr key={rowIndex}>
+              <td>{row.name}</td>
+              <td>{row.address}</td>
+              <td>{row.taxNumber}</td>
+              <td>{row.taxOffice}</td>
+              <td>
+                <ActionIconsGroup
+                  rowId={row.id}
+                  updateModalTitle="Cari Kaydını Güncelle"
+                  deleteModalTitle="Bu cari kaydını silmek istediğinizden emin misiniz?"
+                  deleteModalText="Bu işlem geri alınamaz. Bu cari kaydıyla ilgili tüm veriler silinecektir."
+                  deleteModalConfirmButtonLabel="Cari Kaydını Sil"
+                  deleteModalCancelButtonLabel="İptal"
+                />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
     </AppShellLayout>
   );
 };
