@@ -8,9 +8,15 @@ interface HeaderGroupProps {
   title: string;
   modalTitle: string;
   addButtonTitle: string;
+  addButtonModalForm: JSX.Element;
 }
 
-const HeaderGroup: React.FC<HeaderGroupProps> = ({ title, modalTitle, addButtonTitle }) => {
+const HeaderGroup: React.FC<HeaderGroupProps> = ({
+  title,
+  modalTitle,
+  addButtonTitle,
+  addButtonModalForm,
+}) => {
   const [openedNewButton, { open: openNewButton, close: closeNewButton }] = useDisclosure(false);
 
   return (
@@ -33,7 +39,7 @@ const HeaderGroup: React.FC<HeaderGroupProps> = ({ title, modalTitle, addButtonT
       <Divider my="sm" size={1} />
 
       <Modal opened={openedNewButton} onClose={closeNewButton} title={modalTitle} centered>
-        {/* yeni iş ekleme modal buraya */}
+        {addButtonModalForm}
       </Modal>
     </>
   );
