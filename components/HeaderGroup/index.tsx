@@ -2,7 +2,7 @@ import { Divider, Flex, Group, Modal, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconPlus } from '@tabler/icons';
 import React from 'react';
-import CustomButton from '../CustomButton';
+import CustomButton from '../ui/CustomButton';
 
 interface HeaderGroupProps {
   title: string;
@@ -38,7 +38,13 @@ const HeaderGroup: React.FC<HeaderGroupProps> = ({
 
       <Divider my="sm" size={1} />
 
-      <Modal opened={openedNewButton} onClose={closeNewButton} title={modalTitle} centered>
+      <Modal
+        size="xl"
+        opened={openedNewButton}
+        onClose={closeNewButton}
+        title={modalTitle}
+        centered
+      >
         {addButtonModalForm}
       </Modal>
     </>

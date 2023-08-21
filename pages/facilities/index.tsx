@@ -4,8 +4,8 @@ import React from 'react';
 import useSWR from 'swr';
 import AppShellLayout from '../../components/AppShellLayout';
 
-import ActionIconsGroup from '../../components/ui/ActionIconGroup';
-import HeaderGroup from '../../components/ui/HeaderGroup';
+import ActionIconsGroup from '../../components/ActionIconGroup';
+import HeaderGroup from '../../components/HeaderGroup';
 import LoadingIcon from '../../components/ui/LoadingIcon';
 import useAuthentication from '../../hooks/useAuthentication';
 import fetcher from '../../utils/fetcher';
