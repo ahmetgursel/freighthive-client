@@ -9,6 +9,7 @@ import NewTruckModal from '../../components/NewTruckModal';
 import LoadingIcon from '../../components/ui/LoadingIcon';
 import useAuthentication from '../../hooks/useAuthentication';
 import fetcher from '../../utils/fetcher';
+import UpdateTruckModal from '../../components/UpdateTruckModal';
 
 interface TruckType {
   id: string;
@@ -20,11 +21,26 @@ interface TruckType {
 }
 
 const columns = [
-  { key: 'plateNumber', title: 'Plaka' },
-  { key: 'driverName', title: 'Sürücü' },
-  { key: 'driverPhone', title: 'Telefon Numarası' },
-  { key: 'capacity', title: 'Kapasite' },
-  { key: 'status', title: 'Durum' },
+  {
+    key: 'plateNumber',
+    title: 'Plaka',
+  },
+  {
+    key: 'driverName',
+    title: 'Sürücü',
+  },
+  {
+    key: 'driverPhone',
+    title: 'Telefon Numarası',
+  },
+  {
+    key: 'capacity',
+    title: 'Kapasite',
+  },
+  {
+    key: 'status',
+    title: 'Durum',
+  },
 ];
 
 const Trucks = () => {
@@ -105,6 +121,7 @@ const Trucks = () => {
                   deleteModalText="Bu işlem geri alınamaz. Bu araç kaydıyla ilgili tüm veriler silinecektir."
                   deleteModalConfirmButtonLabel="Araç Kaydını Sil"
                   deleteModalCancelButtonLabel="İptal"
+                  updateButtonModalForm={<UpdateTruckModal truckId={row.id} rowData={row} />}
                 />
               </td>
             </tr>

@@ -12,6 +12,7 @@ interface ActionIconsGroupProps {
   deleteModalText: string;
   deleteModalConfirmButtonLabel: string;
   deleteModalCancelButtonLabel: string;
+  updateButtonModalForm: JSX.Element;
 }
 
 const ActionIconsGroup: React.FC<ActionIconsGroupProps> = ({
@@ -21,6 +22,7 @@ const ActionIconsGroup: React.FC<ActionIconsGroupProps> = ({
   deleteModalText,
   deleteModalConfirmButtonLabel,
   deleteModalCancelButtonLabel,
+  updateButtonModalForm,
 }) => {
   const [openedUpdateIcon, { open: openUpdateIcon, close: closeUpdateIcon }] = useDisclosure(false);
 
@@ -48,8 +50,14 @@ const ActionIconsGroup: React.FC<ActionIconsGroupProps> = ({
         <IconTrashOff size="1rem" onClick={openDeleteModal} />
       </ActionIcon>
 
-      <Modal opened={openedUpdateIcon} onClose={closeUpdateIcon} title={updateModalTitle} centered>
-        <h1>{rowId}</h1>
+      <Modal
+        size="xl"
+        opened={openedUpdateIcon}
+        onClose={closeUpdateIcon}
+        title={updateModalTitle}
+        centered
+      >
+        {updateButtonModalForm}
       </Modal>
     </Flex>
   );
