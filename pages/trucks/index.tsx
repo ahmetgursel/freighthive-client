@@ -1,7 +1,9 @@
 import { Badge, Table } from '@mantine/core';
 import router from 'next/router';
 import React from 'react';
-import useSWR from 'swr';
+import { notifications } from '@mantine/notifications';
+import { IconCheck, IconX } from '@tabler/icons-react';
+import useSWR, { mutate } from 'swr';
 import ActionIconsGroup from '../../components/ActionIconGroup';
 import AppShellLayout from '../../components/AppShellLayout';
 import HeaderGroup from '../../components/HeaderGroup';
@@ -45,7 +47,8 @@ const columns = [
 
 const Trucks = () => {
   const authenticationData = useAuthentication();
-  const { data, error } = useSWR('/api/trucks', fetcher);
+
+  const { data, error: swrError } = useSWR('/api/trucks', fetcher);
 
   if (authenticationData === null) {
     // Eğer authenticationData henüz gelmemişse loading ikonunu görüntüle
@@ -58,16 +61,50 @@ const Trucks = () => {
     return null;
   }
 
-  if (!data && !error) {
+  if (!data && !swrError) {
     // Veri henüz yüklenmemişse veya hata oluşmamışsa loading ikonunu görüntüle
     return <LoadingIcon />;
   }
 
-  if (error) {
+  if (swrError) {
     // Hata durumunda hata mesajını görüntüle
     // TODO: error page oluştur
-    return <div>Hata oluştu: {error.message}</div>;
+    return <div>Hata oluştu: {swrError.message}</div>;
   }
+
+  const handleDeleteConfirmButton = async (rowId: string) => {
+    try {
+      const response = await fetch(`/api/trucks/${rowId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        mutate('/api/trucks');
+        notifications.show({
+          color: 'teal',
+          title: 'Araç başarıyla silindi',
+          message:
+            'Araç başarıyla silindi. Yeni bir araç silmek için tekrar silme ikonunu kullanabilirsiniz.',
+          icon: <IconCheck size="1rem" />,
+          autoClose: 5000,
+        });
+      } else {
+        //TODO: error handling geliştirilmeli
+        throw new Error('Araç eklenirken bir hata oluştu');
+      }
+    } catch (error) {
+      notifications.show({
+        color: 'red',
+        title: 'Araç silinirken hata oluştu',
+        message: 'Malesef araç silinirken bir hata oluştu. Lütfen tekrar deneyin.',
+        icon: <IconX size="1rem" />,
+        autoClose: 5000,
+      });
+    }
+  };
 
   return (
     <AppShellLayout>
@@ -122,6 +159,7 @@ const Trucks = () => {
                   deleteModalConfirmButtonLabel="Araç Kaydını Sil"
                   deleteModalCancelButtonLabel="İptal"
                   updateButtonModalForm={<UpdateTruckModal truckId={row.id} rowData={row} />}
+                  handleDeleteConfirmButton={handleDeleteConfirmButton}
                 />
               </td>
             </tr>

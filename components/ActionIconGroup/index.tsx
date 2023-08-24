@@ -3,9 +3,6 @@ import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { IconSettings, IconTrashOff } from '@tabler/icons';
 import React from 'react';
-import { notifications } from '@mantine/notifications';
-import { IconCheck, IconX } from '@tabler/icons-react';
-import { mutate } from 'swr';
 
 interface ActionIconsGroupProps {
   rowId: string;
@@ -15,6 +12,7 @@ interface ActionIconsGroupProps {
   deleteModalConfirmButtonLabel: string;
   deleteModalCancelButtonLabel: string;
   updateButtonModalForm: JSX.Element;
+  handleDeleteConfirmButton: (rowId: string) => void;
 }
 
 const ActionIconsGroup: React.FC<ActionIconsGroupProps> = ({
@@ -25,42 +23,9 @@ const ActionIconsGroup: React.FC<ActionIconsGroupProps> = ({
   deleteModalConfirmButtonLabel,
   deleteModalCancelButtonLabel,
   updateButtonModalForm,
+  handleDeleteConfirmButton,
 }) => {
   const [openedUpdateIcon, { open: openUpdateIcon, close: closeUpdateIcon }] = useDisclosure(false);
-
-  const handleDeleteConfirmButton = async () => {
-    try {
-      const response = await fetch(`/api/trucks/${rowId}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        mutate('/api/trucks');
-        notifications.show({
-          color: 'teal',
-          title: 'Araç başarıyla silindi',
-          message:
-            'Araç başarıyla silindi. Yeni bir araç silmek için tekrar silme ikonunu kullanabilirsiniz.',
-          icon: <IconCheck size="1rem" />,
-          autoClose: 5000,
-        });
-      } else {
-        //TODO: error handling geliştirilmeli
-        throw new Error('Araç eklenirken bir hata oluştu');
-      }
-    } catch (error) {
-      notifications.show({
-        color: 'red',
-        title: 'Araç silinirken hata oluştu',
-        message: 'Malesef araç silinirken bir hata oluştu. Lütfen tekrar deneyin.',
-        icon: <IconX size="1rem" />,
-        autoClose: 5000,
-      });
-    }
-  };
 
   const openDeleteModal = () =>
     modals.openConfirmModal({
@@ -72,7 +37,7 @@ const ActionIconsGroup: React.FC<ActionIconsGroupProps> = ({
         cancel: `${deleteModalCancelButtonLabel}`,
       },
       confirmProps: { color: 'red' },
-      onConfirm: () => handleDeleteConfirmButton(),
+      onConfirm: () => handleDeleteConfirmButton(rowId),
     });
 
   return (
