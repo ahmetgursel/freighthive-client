@@ -93,7 +93,7 @@ const Trucks = () => {
         });
       } else {
         //TODO: error handling geliştirilmeli
-        throw new Error('Araç eklenirken bir hata oluştu');
+        throw new Error('Araç silinirken bir hata oluştu');
       }
     } catch (error) {
       notifications.show({
