@@ -1,7 +1,9 @@
 import { Table } from '@mantine/core';
 import router from 'next/router';
 import React from 'react';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
+import { notifications } from '@mantine/notifications';
+import { IconCheck, IconX } from '@tabler/icons-react';
 import ActionIconsGroup from '../../components/ActionIconGroup';
 import AppShellLayout from '../../components/AppShellLayout';
 import HeaderGroup from '../../components/HeaderGroup';
@@ -26,7 +28,7 @@ const columns = [
 
 const Organizations = () => {
   const authenticationData = useAuthentication();
-  const { data, error } = useSWR('/api/organizations', fetcher);
+  const { data, error: swrError } = useSWR('/api/organizations', fetcher);
 
   if (authenticationData === null) {
     // Eğer authenticationData henüz gelmemişse loading ikonunu görüntüle
@@ -39,16 +41,50 @@ const Organizations = () => {
     return null;
   }
 
-  if (!data && !error) {
+  if (!data && !swrError) {
     // Veri henüz yüklenmemişse veya hata oluşmamışsa loading ikonunu görüntüle
     return <LoadingIcon />;
   }
 
-  if (error) {
+  if (swrError) {
     // Hata durumunda hata mesajını görüntüle
     // TODO: error page oluştur
-    return <div>Hata oluştu: {error.message}</div>;
+    return <div>Hata oluştu: {swrError.message}</div>;
   }
+
+  const handleDeleteConfirmButton = async (rowId: string) => {
+    try {
+      const response = await fetch(`/api/organizations/${rowId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        mutate('/api/organizations');
+        notifications.show({
+          color: 'teal',
+          title: 'Cari kayıt başarıyla silindi',
+          message:
+            'Cari kayıt başarıyla silindi. Yeni bir cari kayıt silmek için tekrar silme ikonunu kullanabilirsiniz.',
+          icon: <IconCheck size="1rem" />,
+          autoClose: 5000,
+        });
+      } else {
+        //TODO: error handling geliştirilmeli
+        throw new Error('Cari kayıt silinirken bir hata oluştu');
+      }
+    } catch (error) {
+      notifications.show({
+        color: 'red',
+        title: 'Cari kayıt silinirken hata oluştu',
+        message: 'Malesef cari kayıt silinirken bir hata oluştu. Lütfen tekrar deneyin.',
+        icon: <IconX size="1rem" />,
+        autoClose: 5000,
+      });
+    }
+  };
 
   return (
     <AppShellLayout>
@@ -56,6 +92,7 @@ const Organizations = () => {
         modalTitle="Yeni Cari Kayıt Ekle"
         title="Cari Listesi"
         addButtonTitle="Yeni Cari Kayıt Ekle"
+        addButtonModalForm={<h1>Yeni Cari Kayıt Ekle</h1>}
       />
 
       <Table
@@ -90,6 +127,8 @@ const Organizations = () => {
                   deleteModalText="Bu işlem geri alınamaz. Bu cari kaydıyla ilgili tüm veriler silinecektir."
                   deleteModalConfirmButtonLabel="Cari Kaydını Sil"
                   deleteModalCancelButtonLabel="İptal"
+                  updateButtonModalForm={<h1>Cari Kaydını Güncelle</h1>}
+                  handleDeleteConfirmButton={handleDeleteConfirmButton}
                 />
               </td>
             </tr>
