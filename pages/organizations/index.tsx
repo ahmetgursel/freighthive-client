@@ -49,6 +49,7 @@ const Organizations = () => {
   if (swrError) {
     // Hata durumunda hata mesajını görüntüle
     // TODO: error page oluştur
+    // FIXME: Sayfa boş geliyorsa network hatası veriyor
     return <div>Hata oluştu: {swrError.message}</div>;
   }
 

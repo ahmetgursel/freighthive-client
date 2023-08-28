@@ -1,9 +1,10 @@
 import { Table } from '@mantine/core';
 import router from 'next/router';
 import React from 'react';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
+import { notifications } from '@mantine/notifications';
+import { IconCheck, IconX } from '@tabler/icons-react';
 import AppShellLayout from '../../components/AppShellLayout';
-
 import ActionIconsGroup from '../../components/ActionIconGroup';
 import HeaderGroup from '../../components/HeaderGroup';
 import LoadingIcon from '../../components/ui/LoadingIcon';
@@ -27,7 +28,7 @@ const columns = [
 
 const Facilities = () => {
   const authenticationData = useAuthentication();
-  const { data, error } = useSWR('/api/facilities', fetcher);
+  const { data, error: swrError } = useSWR('/api/facilities', fetcher);
 
   if (authenticationData === null) {
     // Eğer authenticationData henüz gelmemişse loading ikonunu görüntüle
@@ -40,16 +41,51 @@ const Facilities = () => {
     return null;
   }
 
-  if (!data && !error) {
+  if (!data && !swrError) {
     // Veri henüz yüklenmemişse veya hata oluşmamışsa loading ikonunu görüntüle
     return <LoadingIcon />;
   }
 
-  if (error) {
+  if (swrError) {
     // Hata durumunda hata mesajını görüntüle
     // TODO: error page oluştur
-    return <div>Hata oluştu: {error.message}</div>;
+    // FIXME: Sayfa boş geliyorsa network hatası veriyor
+    return <div>Hata oluştu: {swrError.message}</div>;
   }
+
+  const handleDeleteConfirmButton = async (rowId: string) => {
+    try {
+      const response = await fetch(`/api/facilities/${rowId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        mutate('/api/facilities');
+        notifications.show({
+          color: 'teal',
+          title: 'Depo başarıyla silindi',
+          message:
+            'Depo başarıyla silindi. Yeni bir depo silmek için tekrar silme ikonunu kullanabilirsiniz.',
+          icon: <IconCheck size="1rem" />,
+          autoClose: 5000,
+        });
+      } else {
+        //TODO: error handling geliştirilmeli
+        throw new Error('Depo silinirken bir hata oluştu');
+      }
+    } catch (error) {
+      notifications.show({
+        color: 'red',
+        title: 'Depo silinirken hata oluştu',
+        message: 'Malesef depo silinirken bir hata oluştu. Lütfen tekrar deneyin.',
+        icon: <IconX size="1rem" />,
+        autoClose: 5000,
+      });
+    }
+  };
 
   return (
     <AppShellLayout>
@@ -57,6 +93,7 @@ const Facilities = () => {
         modalTitle="Yeni Depo Ekle"
         title="Depo Listesi"
         addButtonTitle="Yeni Depo Ekle"
+        addButtonModalForm={<h1>Yeni Depo Kaydı Ekle</h1>}
       />
 
       <Table
@@ -91,6 +128,8 @@ const Facilities = () => {
                   deleteModalText="Bu işlem geri alınamaz. Bu depo kaydıyla ilgili tüm veriler silinecektir."
                   deleteModalConfirmButtonLabel="Depo Kaydını Sil"
                   deleteModalCancelButtonLabel="İptal"
+                  updateButtonModalForm={<h1>Depo Kaydını Güncelle</h1>}
+                  handleDeleteConfirmButton={handleDeleteConfirmButton}
                 />
               </td>
             </tr>
