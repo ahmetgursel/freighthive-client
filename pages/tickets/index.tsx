@@ -1,13 +1,15 @@
 import { Badge, Table } from '@mantine/core';
 import router from 'next/router';
 import React from 'react';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import ActionIconsGroup from '../../components/ActionIconGroup';
 import AppShellLayout from '../../components/AppShellLayout';
 import HeaderGroup from '../../components/HeaderGroup';
 import LoadingIcon from '../../components/ui/LoadingIcon';
 import useAuthentication from '../../hooks/useAuthentication';
 import fetcher from '../../utils/fetcher';
+import { notifications } from '@mantine/notifications';
+import { IconCheck, IconX } from '@tabler/icons-react';
 
 interface TicketType {
   id: string;
@@ -74,9 +76,10 @@ const definedHours = 6 * 60; // 6 saat
 const baseShippingPrice = 100; // Sabit nakliye ücreti
 const waitingPricePerCount = 20; // Bekleme başına ek ücret
 
+// FIXME:yük durumunda giriş ve çıkış verisi nullsa yine yük boşaltıldı görünüyor
 const Tickets = () => {
   const authenticationData = useAuthentication();
-  const { data, error } = useSWR('/api/tickets', fetcher);
+  const { data, error: swrError } = useSWR('/api/tickets', fetcher);
   // kaç saatte bir bekleme olacağını belirleyen değişken
 
   if (authenticationData === null) {
@@ -90,20 +93,60 @@ const Tickets = () => {
     return null;
   }
 
-  if (!data && !error) {
+  if (!data && !swrError) {
     // Veri henüz yüklenmemişse veya hata oluşmamışsa loading ikonunu görüntüle
     return <LoadingIcon />;
   }
 
-  if (error) {
+  if (swrError) {
     // Hata durumunda hata mesajını görüntüle
     // TODO: error page oluştur
-    return <div>Hata oluştu: {error.message}</div>;
+    // FIXME: Sayfada data boş geliyorsa network hatası veriyor
+    return <div>Hata oluştu: {swrError.message}</div>;
   }
+
+  const handleDeleteConfirmButton = async (rowId: string) => {
+    try {
+      const response = await fetch(`/api/tickets/${rowId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        mutate('/api/tickets');
+        notifications.show({
+          color: 'teal',
+          title: 'İş kaydı başarıyla silindi',
+          message:
+            'İş kaydı başarıyla silindi. Yeni bir iş kaydı silmek için tekrar silme ikonunu kullanabilirsiniz.',
+          icon: <IconCheck size="1rem" />,
+          autoClose: 5000,
+        });
+      } else {
+        //TODO: error handling geliştirilmeli
+        throw new Error('İş kaydı silinirken bir hata oluştu');
+      }
+    } catch (error) {
+      notifications.show({
+        color: 'red',
+        title: 'İş kaydı silinirken hata oluştu',
+        message: 'Malesef iş kaydı silinirken bir hata oluştu. Lütfen tekrar deneyin.',
+        icon: <IconX size="1rem" />,
+        autoClose: 5000,
+      });
+    }
+  };
 
   return (
     <AppShellLayout>
-      <HeaderGroup modalTitle="Yeni İş Ekle" title="İş Listesi" addButtonTitle="Yeni İş Ekle" />
+      <HeaderGroup
+        modalTitle="Yeni İş Ekle"
+        title="İş Listesi"
+        addButtonTitle="Yeni İş Ekle"
+        addButtonModalForm={<h1>Yeni İş Kaydı Ekle</h1>}
+      />
 
       <Table
         verticalSpacing="md"
@@ -191,6 +234,8 @@ const Tickets = () => {
                     deleteModalText="Bu işlem geri alınamaz. Bu araç kaydıyla ilgili tüm veriler silinecektir."
                     deleteModalConfirmButtonLabel="Araç Kaydını Sil"
                     deleteModalCancelButtonLabel="İptal"
+                    updateButtonModalForm={<h1>Depo Kaydını Güncelle</h1>}
+                    handleDeleteConfirmButton={handleDeleteConfirmButton}
                   />
                 </td>
               </tr>
