@@ -10,6 +10,7 @@ import HeaderGroup from '../../components/HeaderGroup';
 import LoadingIcon from '../../components/ui/LoadingIcon';
 import useAuthentication from '../../hooks/useAuthentication';
 import fetcher from '../../utils/fetcher';
+import NewFacilityModal from '../../components/NewFacilityModal';
 
 interface FacilityType {
   id: string;
@@ -93,7 +94,7 @@ const Facilities = () => {
         modalTitle="Yeni Depo Ekle"
         title="Depo Listesi"
         addButtonTitle="Yeni Depo Ekle"
-        addButtonModalForm={<h1>Yeni Depo Kaydı Ekle</h1>}
+        addButtonModalForm={<NewFacilityModal />}
       />
 
       <Table
