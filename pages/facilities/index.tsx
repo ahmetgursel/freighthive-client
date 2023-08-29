@@ -11,6 +11,7 @@ import LoadingIcon from '../../components/ui/LoadingIcon';
 import useAuthentication from '../../hooks/useAuthentication';
 import fetcher from '../../utils/fetcher';
 import NewFacilityModal from '../../components/NewFacilityModal';
+import UpdateFacilityModal from '../../components/UpdateFacilityModal';
 
 interface FacilityType {
   id: string;
@@ -129,7 +130,7 @@ const Facilities = () => {
                   deleteModalText="Bu işlem geri alınamaz. Bu depo kaydıyla ilgili tüm veriler silinecektir."
                   deleteModalConfirmButtonLabel="Depo Kaydını Sil"
                   deleteModalCancelButtonLabel="İptal"
-                  updateButtonModalForm={<h1>Depo Kaydını Güncelle</h1>}
+                  updateButtonModalForm={<UpdateFacilityModal facilityId={row.id} rowData={row} />}
                   handleDeleteConfirmButton={handleDeleteConfirmButton}
                 />
               </td>
