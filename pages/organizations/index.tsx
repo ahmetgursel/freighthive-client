@@ -10,6 +10,7 @@ import HeaderGroup from '../../components/HeaderGroup';
 import LoadingIcon from '../../components/ui/LoadingIcon';
 import useAuthentication from '../../hooks/useAuthentication';
 import fetcher from '../../utils/fetcher';
+import NewOrganizationModal from '../../components/NewOrganizationModal';
 
 interface OrganizationType {
   id: string;
@@ -93,7 +94,7 @@ const Organizations = () => {
         modalTitle="Yeni Cari Kayıt Ekle"
         title="Cari Listesi"
         addButtonTitle="Yeni Cari Kayıt Ekle"
-        addButtonModalForm={<h1>Yeni Cari Kayıt Ekle</h1>}
+        addButtonModalForm={<NewOrganizationModal />}
       />
 
       <Table
