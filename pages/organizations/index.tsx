@@ -11,6 +11,7 @@ import LoadingIcon from '../../components/ui/LoadingIcon';
 import useAuthentication from '../../hooks/useAuthentication';
 import fetcher from '../../utils/fetcher';
 import NewOrganizationModal from '../../components/NewOrganizationModal';
+import UpdateOrganizationModal from '../../components/UpdateOrganizationModal';
 
 interface OrganizationType {
   id: string;
@@ -18,6 +19,7 @@ interface OrganizationType {
   address: string;
   taxNumber: string;
   taxOffice: string;
+  invoiceAddress: string;
 }
 
 const columns = [
@@ -129,7 +131,9 @@ const Organizations = () => {
                   deleteModalText="Bu işlem geri alınamaz. Bu cari kaydıyla ilgili tüm veriler silinecektir."
                   deleteModalConfirmButtonLabel="Cari Kaydını Sil"
                   deleteModalCancelButtonLabel="İptal"
-                  updateButtonModalForm={<h1>Cari Kaydını Güncelle</h1>}
+                  updateButtonModalForm={
+                    <UpdateOrganizationModal organizationId={row.id} rowData={row} />
+                  }
                   handleDeleteConfirmButton={handleDeleteConfirmButton}
                 />
               </td>

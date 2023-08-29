@@ -13,14 +13,22 @@ interface OrganizationType {
   invoiceAddress: string;
 }
 
-const NewOrganizationModal = () => {
+interface UpdateOrganizationModalProps {
+  organizationId: string;
+  rowData: OrganizationType;
+}
+
+const UpdateOrganizationModal: React.FC<UpdateOrganizationModalProps> = ({
+  organizationId,
+  rowData,
+}) => {
   const form = useForm<OrganizationType>({
     initialValues: {
-      name: '',
-      address: '',
-      taxNumber: '',
-      taxOffice: '',
-      invoiceAddress: '',
+      name: rowData.name,
+      address: rowData.address,
+      taxNumber: rowData.taxNumber,
+      taxOffice: rowData.taxOffice,
+      invoiceAddress: rowData.invoiceAddress,
     },
     validate: {
       name: (value) => (!value ? 'Şirket ismi zorunludur' : null),
@@ -33,8 +41,8 @@ const NewOrganizationModal = () => {
 
   const handleSubmit = async (values: OrganizationType) => {
     try {
-      const response = await fetch('/api/organizations', {
-        method: 'POST',
+      const response = await fetch(`/api/organizations/${organizationId}`, {
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -42,24 +50,23 @@ const NewOrganizationModal = () => {
       });
 
       if (response.ok) {
-        form.reset(); // Formu sıfırla
         mutate('/api/organizations');
         notifications.show({
           color: 'teal',
-          title: 'Cari kayıt başarıyla eklendi',
+          title: 'Cari kayıt başarıyla güncellendi',
           message:
-            'Cari kayıt başarıyla eklendi. Yeni bir kayıt eklemek için tekrar formu kullanabilirsiniz.',
+            'Cari kayıt başarıyla güncellendi. Yeni bir kayıt güncellemek için tekrar formu kullanabilirsiniz.',
           icon: <IconCheck size="1rem" />,
           autoClose: 5000,
         });
       } else {
-        throw new Error('Cari kayıt eklenirken bir hata oluştu');
+        throw new Error('Cari kayıt güncellenirken bir hata oluştu');
       }
     } catch (error) {
       notifications.show({
         color: 'red',
-        title: 'Cari kayıt eklenirken hata oluştu',
-        message: 'Malesef cari kayıt eklenirken bir hata oluştu. Lütfen tekrar deneyin.',
+        title: 'Cari kayıt güncellenirken hata oluştu',
+        message: 'Malesef cari kayıt güncellenirken bir hata oluştu. Lütfen tekrar deneyin.',
         icon: <IconX size="1rem" />,
         autoClose: 5000,
       });
@@ -128,7 +135,7 @@ const NewOrganizationModal = () => {
           <Box>
             <Group position="right" mt={36}>
               <Button type="submit" leftIcon={<IconSquarePlus size="1rem" />}>
-                Cari Kayıt Ekle
+                Cari Kayıt Güncelle
               </Button>
             </Group>
           </Box>
@@ -138,4 +145,4 @@ const NewOrganizationModal = () => {
   );
 };
 
-export default NewOrganizationModal;
+export default UpdateOrganizationModal;
