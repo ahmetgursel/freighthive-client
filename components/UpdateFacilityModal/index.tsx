@@ -44,7 +44,6 @@ const UpdateFacilityModal: React.FC<UpdateFacilityModalProps> = ({ facilityId, r
       });
 
       if (response.ok) {
-        form.reset();
         mutate('/api/facilities');
         notifications.show({
           color: 'teal',
