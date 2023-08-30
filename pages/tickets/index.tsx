@@ -2,14 +2,16 @@ import { Badge, Table } from '@mantine/core';
 import router from 'next/router';
 import React from 'react';
 import useSWR, { mutate } from 'swr';
+import { notifications } from '@mantine/notifications';
+import { IconCheck, IconX } from '@tabler/icons-react';
 import ActionIconsGroup from '../../components/ActionIconGroup';
 import AppShellLayout from '../../components/AppShellLayout';
 import HeaderGroup from '../../components/HeaderGroup';
 import LoadingIcon from '../../components/ui/LoadingIcon';
 import useAuthentication from '../../hooks/useAuthentication';
 import fetcher from '../../utils/fetcher';
-import { notifications } from '@mantine/notifications';
-import { IconCheck, IconX } from '@tabler/icons-react';
+
+import NewTicketModal from '../../components/NewTicketModal';
 
 interface TicketType {
   id: string;
@@ -145,7 +147,7 @@ const Tickets = () => {
         modalTitle="Yeni İş Ekle"
         title="İş Listesi"
         addButtonTitle="Yeni İş Ekle"
-        addButtonModalForm={<h1>Yeni İş Kaydı Ekle</h1>}
+        addButtonModalForm={<NewTicketModal />}
       />
 
       <Table
