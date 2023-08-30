@@ -3,7 +3,7 @@ import { Autocomplete, Box, Button, Grid, Group, Select, TextInput } from '@mant
 import { useForm } from '@mantine/form';
 import { DateTimePicker } from '@mantine/dates';
 import { notifications } from '@mantine/notifications';
-import { IconCheck, IconSquarePlus, IconX } from '@tabler/icons-react';
+import { IconCalendarStats, IconCheck, IconSquarePlus, IconX } from '@tabler/icons-react';
 import useSWR, { mutate } from 'swr';
 import fetcher from '../../utils/fetcher';
 import LoadingIcon from '../ui/LoadingIcon';
@@ -183,6 +183,7 @@ const NewTicketModal = () => {
             placeholder="Giriş Tarih ve Saati"
             label="Giriş Tarih ve Saati"
             description="Lütfen Giriş Tarih ve Saatini Girin"
+            icon={<IconCalendarStats size="1rem" />}
             radius="lg"
             {...form.getInputProps('entryTime')}
           />
@@ -206,6 +207,7 @@ const NewTicketModal = () => {
             placeholder="Çıkış Tarih ve Saati"
             label="Çıkış Tarih ve Saati"
             description="Lütfen Çıkış Tarih ve Saatini Girin"
+            icon={<IconCalendarStats size="1rem" />}
             radius="lg"
             {...form.getInputProps('exitTime')}
           />
