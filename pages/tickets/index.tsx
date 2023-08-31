@@ -12,6 +12,7 @@ import useAuthentication from '../../hooks/useAuthentication';
 import fetcher from '../../utils/fetcher';
 
 import NewTicketModal from '../../components/NewTicketModal';
+import UpdateTicketModal from '../../components/UpdateTicketModal';
 
 interface TicketType {
   id: string;
@@ -66,12 +67,30 @@ interface TruckType {
 }
 
 const columns = [
-  { key: 'createdAt', title: 'Tarih' },
-  { key: 'plateNumber', title: 'Plaka' },
-  { key: 'containerNumber', title: 'Konteyner Numarası' },
-  { key: 'ticketStatus', title: 'Yük Durumu' },
-  { key: 'totalPrice', title: 'Nakliye Tutarı' },
-  { key: 'isInvoiceCreated', title: 'Fatura Durumu' },
+  {
+    key: 'createdAt',
+    title: 'Tarih',
+  },
+  {
+    key: 'plateNumber',
+    title: 'Plaka',
+  },
+  {
+    key: 'containerNumber',
+    title: 'Konteyner Numarası',
+  },
+  {
+    key: 'ticketStatus',
+    title: 'Yük Durumu',
+  },
+  {
+    key: 'totalPrice',
+    title: 'Nakliye Tutarı',
+  },
+  {
+    key: 'isInvoiceCreated',
+    title: 'Fatura Durumu',
+  },
 ];
 
 const definedHours = 6 * 60; // 6 saat
@@ -172,7 +191,11 @@ const Tickets = () => {
             const entryTime = row.entryTime ? new Date(row.entryTime) : null;
             const exitTime = row.exitTime ? new Date(row.exitTime) : null;
             const now = new Date();
-            console.log({ entryTime, exitTime, now });
+            console.log({
+              entryTime,
+              exitTime,
+              now,
+            });
 
             let waitingTime = 0;
             if (entryTime && exitTime) {
@@ -181,7 +204,10 @@ const Tickets = () => {
             }
 
             const waitingCount = Math.ceil(waitingTime / definedHours); // Her 6 saatte bir bekleme
-            console.log({ waitingTime, waitingCount });
+            console.log({
+              waitingTime,
+              waitingCount,
+            });
 
             let currentWaiting = 0;
             if (entryTime && !exitTime) {
@@ -231,12 +257,12 @@ const Tickets = () => {
                 <td>
                   <ActionIconsGroup
                     rowId={row.id}
-                    updateModalTitle="Araç Kaydını Güncelle"
-                    deleteModalTitle="Bu araç kaydını silmek istediğinizden emin misiniz?"
-                    deleteModalText="Bu işlem geri alınamaz. Bu araç kaydıyla ilgili tüm veriler silinecektir."
-                    deleteModalConfirmButtonLabel="Araç Kaydını Sil"
+                    updateModalTitle="İş Kaydını Güncelle"
+                    deleteModalTitle="Bu iş kaydını silmek istediğinizden emin misiniz?"
+                    deleteModalText="Bu işlem geri alınamaz. Bu iş kaydıyla ilgili tüm veriler silinecektir."
+                    deleteModalConfirmButtonLabel="İş Kaydını Sil"
                     deleteModalCancelButtonLabel="İptal"
-                    updateButtonModalForm={<h1>Depo Kaydını Güncelle</h1>}
+                    updateButtonModalForm={<UpdateTicketModal ticketId={row.id} rowData={row} />}
                     handleDeleteConfirmButton={handleDeleteConfirmButton}
                   />
                 </td>
