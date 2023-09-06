@@ -8,15 +8,19 @@ import {
   Text,
   TextInput,
   Title,
+  Alert,
+  Transition,
 } from '@mantine/core';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import { IconAlertCircle } from '@tabler/icons-react';
 import useAuthentication from '../../hooks/useAuthentication';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [loginError, setLoginError] = useState(false);
   const router = useRouter();
   const authenticationData = useAuthentication();
 
@@ -49,6 +53,7 @@ const LoginPage = () => {
       } else {
         // TODO: show error
         console.log('Login failed');
+        setLoginError(true);
       }
       setLoading(false);
     } catch (error) {
@@ -68,7 +73,18 @@ const LoginPage = () => {
       >
         FreighHive!
       </Title>
-
+      {loginError && (
+        <Alert
+          icon={<IconAlertCircle size="1rem" />}
+          title="Hatalı Giriş!"
+          color="red"
+          variant="filled"
+          mt={30}
+          radius="md"
+        >
+          Kullanıcı adı veya şifre hatalı!
+        </Alert>
+      )}
       <Paper withBorder shadow="md" p={30} mt={30} radius="md">
         <TextInput
           label="Email"
