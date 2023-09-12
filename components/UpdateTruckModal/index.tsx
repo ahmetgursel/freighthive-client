@@ -12,6 +12,18 @@ interface TruckType {
   driverPhone: string;
   capacity: number;
   status: string;
+  createdById: string;
+  tickets: TicketType[];
+}
+
+interface TicketType {
+  id: string;
+  containerNumber: string | null;
+  createdById: string;
+  truckId: string | null;
+  organizationId: string;
+  facilityId: string;
+  isInvoiceCreated: boolean;
 }
 
 interface TruckValueType {
