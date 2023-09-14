@@ -101,7 +101,7 @@ const Facilities = () => {
       <Table
         verticalSpacing="md"
         horizontalSpacing="md"
-        fontSize="lg"
+        fontSize="sm"
         my="md"
         mx="md"
         striped
