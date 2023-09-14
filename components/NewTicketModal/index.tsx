@@ -55,7 +55,6 @@ const NewTicketModal = () => {
       isInvoiceCreated: 'KESİLMEDİ',
     },
     validate: {
-      plateNumber: (value) => (!value ? 'Plaka Numarası Gerekli' : null),
       organizationName: (value) => (!value ? 'Firma İsmi Gerekli' : null),
       facilityName: (value) => (!value ? 'Varış Birimi Gerekli' : null),
       isInvoiceCreated: (value) => (!value ? 'Fatura Durumu Gerekli' : null),
@@ -130,14 +129,6 @@ const NewTicketModal = () => {
         isInvoiceCreated: transformedStatus,
       };
 
-      const updatedTruckBody = {
-        plateNumber: selectedTruck?.plateNumber,
-        driverName: selectedTruck?.driverName,
-        driverPhone: selectedTruck?.driverPhone,
-        capacity: Number(selectedTruck?.capacity),
-        status: 'LOADED',
-      };
-
       const ticketResponse = await fetch('/api/tickets', {
         method: 'POST',
         headers: {
@@ -146,15 +137,29 @@ const NewTicketModal = () => {
         body: JSON.stringify(ticketBody),
       });
 
-      const truckResponse = await fetch(`/api/trucks/${selectedTruck?.id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedTruckBody),
-      });
+      if (selectedTruck) {
+        const updatedTruckBody = {
+          plateNumber: selectedTruck.plateNumber,
+          driverName: selectedTruck.driverName,
+          driverPhone: selectedTruck.driverPhone,
+          capacity: Number(selectedTruck.capacity),
+          status: 'LOADED',
+        };
 
-      if (ticketResponse.ok && truckResponse.ok) {
+        const truckResponse = await fetch(`/api/trucks/${selectedTruck.id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updatedTruckBody),
+        });
+
+        if (!truckResponse.ok) {
+          throw new Error('İş kaydı eklenirken bir hata oluştu');
+        }
+      }
+
+      if (ticketResponse.ok) {
         form.reset();
         mutate('/api/tickets');
         notifications.show({
