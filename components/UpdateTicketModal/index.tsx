@@ -150,7 +150,23 @@ const UpdateTicketModal: React.FC<UpdateTicketModalProps> = ({ ticketId, rowData
         isInvoiceCreated: transformedStatus,
       };
 
-      const response = await fetch(`/api/tickets/${ticketId}`, {
+      const unloadedTruckBody = {
+        plateNumber: rowData.truck?.plateNumber,
+        driverName: rowData.truck?.driverName,
+        driverPhone: rowData.truck?.driverPhone,
+        capacity: Number(rowData.truck?.capacity),
+        status: 'UNLOADED',
+      };
+
+      const loadedTruckBody = {
+        plateNumber: selectedTruck?.plateNumber,
+        driverName: selectedTruck?.driverName,
+        driverPhone: selectedTruck?.driverPhone,
+        capacity: Number(selectedTruck?.capacity),
+        status: 'LOADED',
+      };
+
+      const ticketResponse = await fetch(`/api/tickets/${ticketId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -158,7 +174,57 @@ const UpdateTicketModal: React.FC<UpdateTicketModalProps> = ({ ticketId, rowData
         body: JSON.stringify(ticketBody),
       });
 
-      if (response.ok) {
+      if (rowData.truck?.plateNumber !== selectedTruck?.plateNumber) {
+        if (rowData.truck?.plateNumber && selectedTruck?.plateNumber) {
+          const unloadedTruckResponse = await fetch(`/api/trucks/${rowData.truck?.id}`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(unloadedTruckBody),
+          });
+
+          const loadedTruckResponse = await fetch(`/api/trucks/${selectedTruck.id}`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(loadedTruckBody),
+          });
+
+          if (!unloadedTruckResponse.ok || !loadedTruckResponse.ok) {
+            throw new Error('İş kaydı güncellenirken bir hata oluştu');
+          }
+        } else if (!rowData.truck?.plateNumber && selectedTruck?.plateNumber) {
+          const loadedTruckResponse = await fetch(`/api/trucks/${selectedTruck.id}`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(loadedTruckBody),
+          });
+
+          if (!loadedTruckResponse.ok) {
+            throw new Error('İş kaydı güncellenirken bir hata oluştu');
+          }
+        } else if (rowData.truck?.plateNumber && !selectedTruck?.plateNumber) {
+          const unloadedTruckResponse = await fetch(`/api/trucks/${rowData.truck?.id}`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(unloadedTruckBody),
+          });
+
+          if (!unloadedTruckResponse.ok) {
+            throw new Error('İş kaydı güncellenirken bir hata oluştu');
+          }
+        } else {
+          return;
+        }
+      }
+
+      if (ticketResponse.ok) {
         mutate('/api/tickets');
         notifications.show({
           color: 'teal',
