@@ -1,10 +1,10 @@
 import { Autocomplete, Box, Button, Grid, Group, Select, TextInput } from '@mantine/core';
+import { DateTimePicker } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { IconCalendarStats, IconCheck, IconSquarePlus, IconX } from '@tabler/icons-react';
 import React from 'react';
 import useSWR, { mutate } from 'swr';
-import { DateTimePicker } from '@mantine/dates';
 import fetcher from '../../utils/fetcher';
 import LoadingIcon from '../ui/LoadingIcon';
 
@@ -112,7 +112,10 @@ const UpdateTicketModal: React.FC<UpdateTicketModalProps> = ({ ticketId, rowData
     );
   }
 
-  const truckPlateNumbers = truckData?.map((truck: TruckType) => truck.plateNumber) || [];
+  const truckPlateNumbers =
+    truckData
+      ?.filter((truck: TruckType) => truck.status === 'UNLOADED') // Sadece UNLOADED olan kamyonları seçin
+      .map((truck: TruckType) => truck.plateNumber) || [];
   const organizationNames =
     organizationData?.map((organization: OrganizationType) => organization.name) || [];
   const facilityNames = facilityData?.map((facility: FacilityType) => facility.name) || [];
