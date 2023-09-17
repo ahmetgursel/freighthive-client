@@ -1,17 +1,17 @@
 import { Badge, Table } from '@mantine/core';
-import router from 'next/router';
-import React from 'react';
 import { notifications } from '@mantine/notifications';
 import { IconCheck, IconX } from '@tabler/icons-react';
+import router from 'next/router';
+import React from 'react';
 import useSWR, { mutate } from 'swr';
 import ActionIconsGroup from '../../components/ActionIconGroup';
 import AppShellLayout from '../../components/AppShellLayout';
 import HeaderGroup from '../../components/HeaderGroup';
 import NewTruckModal from '../../components/NewTruckModal';
+import UpdateTruckModal from '../../components/UpdateTruckModal';
 import LoadingIcon from '../../components/ui/LoadingIcon';
 import useAuthentication from '../../hooks/useAuthentication';
 import fetcher from '../../utils/fetcher';
-import UpdateTruckModal from '../../components/UpdateTruckModal';
 
 interface TruckType {
   id: string;

@@ -1,9 +1,9 @@
 import { Badge, Table } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
+import { IconCheck, IconX } from '@tabler/icons-react';
 import router from 'next/router';
 import React from 'react';
 import useSWR, { mutate } from 'swr';
-import { notifications } from '@mantine/notifications';
-import { IconCheck, IconX } from '@tabler/icons-react';
 import ActionIconsGroup from '../../components/ActionIconGroup';
 import AppShellLayout from '../../components/AppShellLayout';
 import HeaderGroup from '../../components/HeaderGroup';
@@ -128,12 +128,37 @@ const Tickets = () => {
 
   const handleDeleteConfirmButton = async (rowId: string) => {
     try {
+      const ticketToDelete = data.find((ticket: TicketType) => ticket.id === rowId);
+      const { truckId } = ticketToDelete;
+
       const response = await fetch(`/api/tickets/${rowId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
       });
+
+      if (truckId) {
+        const unloadedTruckBody = {
+          plateNumber: ticketToDelete.truck.plateNumber,
+          driverName: ticketToDelete.truck.driverName,
+          driverPhone: ticketToDelete.truck.driverPhone,
+          capacity: Number(ticketToDelete.truck.capacity),
+          status: 'UNLOADED',
+        };
+
+        const unloadedTruckResponse = await fetch(`/api/trucks/${truckId}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(unloadedTruckBody),
+        });
+
+        if (!unloadedTruckResponse.ok) {
+          throw new Error('İş kaydı silinirken hata oluştu');
+        }
+      }
 
       if (response.ok) {
         mutate('/api/tickets');
