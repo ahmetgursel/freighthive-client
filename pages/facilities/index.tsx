@@ -1,17 +1,17 @@
 import { Table } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
+import { IconCheck, IconX } from '@tabler/icons-react';
 import router from 'next/router';
 import React from 'react';
 import useSWR, { mutate } from 'swr';
-import { notifications } from '@mantine/notifications';
-import { IconCheck, IconX } from '@tabler/icons-react';
-import AppShellLayout from '../../components/AppShellLayout';
 import ActionIconsGroup from '../../components/ActionIconGroup';
+import AppShellLayout from '../../components/AppShellLayout';
 import HeaderGroup from '../../components/HeaderGroup';
+import NewFacilityModal from '../../components/NewFacilityModal';
+import UpdateFacilityModal from '../../components/UpdateFacilityModal';
 import LoadingIcon from '../../components/ui/LoadingIcon';
 import useAuthentication from '../../hooks/useAuthentication';
 import fetcher from '../../utils/fetcher';
-import NewFacilityModal from '../../components/NewFacilityModal';
-import UpdateFacilityModal from '../../components/UpdateFacilityModal';
 
 interface FacilityType {
   id: string;

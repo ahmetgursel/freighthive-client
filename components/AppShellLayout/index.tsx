@@ -10,6 +10,7 @@ import {
 import { useRouter } from 'next/router';
 import React, { ReactNode } from 'react';
 import { UserCard } from '../ui/UserCard';
+import { ColorSchemeToggle } from '../ColorSchemeToggle';
 
 interface AppShellLayoutProps {
   children: ReactNode;
@@ -53,7 +54,12 @@ const data: MenuItem[] = [
     description: 'Firma ve Adres Bilgileri',
     href: '/organizations',
   },
-  { icon: IconReport, label: 'Raporlar', description: 'Raporlar', href: '/reports' },
+  {
+    icon: IconReport,
+    label: 'Raporlar',
+    description: 'Raporlar',
+    href: '/reports',
+  },
 ];
 
 const AppShellLayout: React.FC<AppShellLayoutProps> = ({ children }) => {
@@ -89,7 +95,7 @@ const AppShellLayout: React.FC<AppShellLayoutProps> = ({ children }) => {
       }
       header={
         <Header height={60} p="xs">
-          Logo, Dark/Light Tema Butonu ve Logouut Butonu Buraya Gelecek
+          <ColorSchemeToggle />
         </Header>
       }
       styles={(theme) => ({
